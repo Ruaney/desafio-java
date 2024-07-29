@@ -22,17 +22,19 @@ public class DataBinding<T> {
         this.view = view;
     }
 
-    public void bindModelToView(String propertyName) {
+    public void bindModelToView(String modelProperty, String viewProperty) {
         model.addObserver((prop, value) -> {
-            if (prop.equals("data")) {
-                view.setProperty(propertyName, value);
+            if (prop.equals(modelProperty)) {
+                if (viewProperty.equals("textField")) {
+                    view.setTextFieldText((String) value);
+                }
             }
         });
     }
 
-    public void bindViewToModel(String propertyName) {
-        view.addPropertyChangeListener(propertyName, (prop, value) -> {
-            if (prop.equals(propertyName)) {
+    public void bindViewToModel(String viewProperty, String modelProperty) {
+        view.addPropertyChangeListener(viewProperty, (prop, value) -> {
+            if (prop.equals(viewProperty)) {
                 model.setData(value);
             }
         });
@@ -40,15 +42,15 @@ public class DataBinding<T> {
 
     public void applyBinding(BindingType bindingType) {
         switch (bindingType) {
-            case OP1_ONE_WAY_MODEL_TO_VIEW:
-                bindModelToView("textField");
-                break;
-            case OP2_ONE_WAY_VIEW_TO_MODEL:
-                bindViewToModel("textField");
-                break;
+//            case OP1_ONE_WAY_MODEL_TO_VIEW:
+//                bindModelToView("data", "textField");
+//                break;
+//            case OP2_ONE_WAY_VIEW_TO_MODEL:
+//                bindViewToModel("textField", "data");
+//                break;
             case OP3_TWO_WAY:
-                bindModelToView("textField");
-                bindViewToModel("textField");
+                bindModelToView("data", "textField");
+                bindViewToModel("textField", "data");
                 break;
         }
     }

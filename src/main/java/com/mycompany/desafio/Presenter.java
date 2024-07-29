@@ -19,22 +19,24 @@ public class Presenter<T> {
 
     }
 
-     private void attachListeners() {
-         view.addPropertyChangeListener("textField", (property, value) -> {
-            if (view.getSelectedBindingType() == BindingType.OP2_ONE_WAY_VIEW_TO_MODEL ||
-                view.getSelectedBindingType() == BindingType.OP3_TWO_WAY) {
+    private void attachListeners() {
+        view.addPropertyChangeListener("modelEditField", (property, value) -> {
+            if (view.getSelectedBindingType() == BindingType.OP3_TWO_WAY) {
                 model.setData(value);
             }
         });
 
+        // Atualiza a view quando o modelo é alterado
         model.addObserver((property, value) -> {
-            if (property.equals("data") &&
-                (view.getSelectedBindingType() == BindingType.OP1_ONE_WAY_MODEL_TO_VIEW ||
-                 view.getSelectedBindingType() == BindingType.OP3_TWO_WAY)) {
-                view.setProperty("textField", value);
+            if (property.equals("data")) {
+                if (view.getSelectedBindingType() == BindingType.OP3_TWO_WAY) {
+                    view.setModelEditFieldText((String) value);
+                    view.setModelValueLabel((String) value);
+                }
             }
         });
 
+        // Aplica o tipo de binding selecionado
         view.addPropertyChangeListener("applyBinding", (property, value) -> {
             if (value instanceof BindingType) {
                 dataBinder.applyBinding((BindingType) value);

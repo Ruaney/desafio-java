@@ -30,45 +30,51 @@ public class View<T> extends Observable<T> {
     private JFrame frame;
     private JLabel label;
     private JTextField textField;
+    private JTextField modelEditField; // Campo para editar o Model
     private Map<String, T> properties = new HashMap<>();
-    private JTextField outputField;
     private JLabel inputLabel;
     private JComboBox<BindingType> bindingTypeComboBox;
-    private JButton applyButton;
-    private T propertyValue;
+    private JButton applyBindingButton;
+    private JLabel modelValueLabel;
 
     public View() {
         frame = new JFrame("Exemplo de Data Binding");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(400, 300);
+        frame.setResizable(false);
 
         inputLabel = new JLabel("modelo");
         textField = new JTextField(20);
-        outputField = new JTextField(20);
+        modelEditField = new JTextField(20); // Campo para editar o Model
+        modelValueLabel = new JLabel("Model Value: "); // Inicialização do JLabel
+
         bindingTypeComboBox = new JComboBox<>(BindingType.values());
-        applyButton = new JButton("Aplicar Binding");
+        applyBindingButton = new JButton("Aplicar Binding");
         JPanel panel = new JPanel();
-        panel.add(inputLabel);
+        panel.add(new JLabel("view:"));
         panel.add(textField);
-        panel.add(new JLabel("atualizar modelo (só sera atualizado se a config for OP2 ou OP3)"));
-        panel.add(outputField);
-        panel.add(new JLabel("Tipo de Binding: "));
+        panel.add(new JLabel("Editar Modelo:")); // Label para o novo campo
+        panel.add(modelEditField); // Adiciona o campo de edição do Model
+        panel.add(modelValueLabel);
+        panel.add(new JLabel("Select Binding Type:"));
         panel.add(bindingTypeComboBox);
-        panel.add(applyButton);
+        panel.add(applyBindingButton);
 
         frame.add(panel);
         frame.setVisible(true);
-     
-    }
-
-    public void setProperty(String propertyName, T value) {
-        properties.put(propertyName, value);
-        if (propertyName.equals("textField")) {
-            textField.setText((String) value);
-        }
-        if (propertyName.equals("label")) {
-            label.setText((String) value);
-        }
+        // Listener para notificar mudanças em textField e outputField
+        textField.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyReleased(KeyEvent e) {
+                notifyObservers("textField", (T) textField.getText());
+            }
+        });
+        modelEditField.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyReleased(KeyEvent e) {
+                notifyObservers("modelEditField", (T) modelEditField.getText());
+            }
+        });
     }
 
     public T getProperty(String propertyName) {
@@ -79,8 +85,27 @@ public class View<T> extends Observable<T> {
         addObserver(observer);
     }
 
+    public void setTextFieldText(String text) {
+        textField.setText(text);
+    }
+
+    public void setModelValueLabel(String text) {
+        modelValueLabel.setText("Model Value: " + text);
+    }
+
+    public String getTextFieldText() {
+        return textField.getText();
+    }
+
+    public void setModelEditFieldText(String text) {
+        modelEditField.setText(text);
+    }
+
+    public String getModelEditFieldText() {
+        return modelEditField.getText();
+    }
+
     public BindingType getSelectedBindingType() {
-        // Mock implementation for demonstration purposes
         return (BindingType) bindingTypeComboBox.getSelectedItem();
     }
 

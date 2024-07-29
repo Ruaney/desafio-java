@@ -9,7 +9,7 @@ package com.mycompany.desafio;
  * @author ruaney
  */
 public enum BindingType {
-    OP1_ONE_WAY_MODEL_TO_VIEW,
-    OP2_ONE_WAY_VIEW_TO_MODEL,
+//    OP1_ONE_WAY_MODEL_TO_VIEW,
+//    OP2_ONE_WAY_VIEW_TO_MODEL,
     OP3_TWO_WAY
 }

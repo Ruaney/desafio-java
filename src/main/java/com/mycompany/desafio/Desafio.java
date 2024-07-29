@@ -13,7 +13,7 @@ import java.awt.event.ActionListener;
 public class Desafio {
 
     public static void main(String[] args) {
-         // Criação do Modelo
+        // Criação do Modelo
         Model<String> model = new Model<>();
 
         // Criação da View
@@ -27,8 +27,8 @@ public class Desafio {
 
         // Configura o modelo e a visão inicial
         model.setData("Valor inicial no modelo");
-        view.setProperty("textField", model.getData());
-
+        view.setTextFieldText(model.getData());
+        view.setModelEditFieldText(model.getData());
     }
 
 }
