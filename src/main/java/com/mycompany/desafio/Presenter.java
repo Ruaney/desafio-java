@@ -1,39 +1,48 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.mycompany.desafio;
 
-import java.io.IOException;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.util.function.BiConsumer;
 
-/**
- *
- * @author ruaney
- */
-public class Presenter {
+public class Presenter<T> {
 
-    private Model<String> model;
-    private View<String> view;
-    private DataBinding dataBinder;
+    private Model<T> model;
+    private View<T> view;
+    private DataBinding<T> dataBinder;
+    private Config config;
 
-    public Presenter(Model<String> model, View<String> view, DataBinding dataBinder) {
+    public Presenter(Model<T> model, View<T> view, DataBinding<T> dataBinder) {
         this.model = model;
         this.view = view;
         this.dataBinder = dataBinder;
+        attachListeners();
 
-        bind();
     }
 
-    private void bind() {
-        dataBinder.bindTwoWay(model, "data", view, "textField");
-        dataBinder.bindOneWay(model, "data", view, "outputLabel");
+     private void attachListeners() {
+         view.addPropertyChangeListener("textField", (property, value) -> {
+            if (view.getSelectedBindingType() == BindingType.OP2_ONE_WAY_VIEW_TO_MODEL ||
+                view.getSelectedBindingType() == BindingType.OP3_TWO_WAY) {
+                model.setData(value);
+            }
+        });
+
+        model.addObserver((property, value) -> {
+            if (property.equals("data") &&
+                (view.getSelectedBindingType() == BindingType.OP1_ONE_WAY_MODEL_TO_VIEW ||
+                 view.getSelectedBindingType() == BindingType.OP3_TWO_WAY)) {
+                view.setProperty("textField", value);
+            }
+        });
+
+        view.addPropertyChangeListener("applyBinding", (property, value) -> {
+            if (value instanceof BindingType) {
+                dataBinder.applyBinding((BindingType) value);
+            }
+        });
     }
 
-    public void updateModel(String newData) throws IOException {
-        model.setData(newData);
-    }
-
-    public void updateView(String newData) {
-        view.setProperty("textField", newData);
+    public void applyBinding(BindingType bindingType) {
+        dataBinder.applyBinding(bindingType);
     }
 }

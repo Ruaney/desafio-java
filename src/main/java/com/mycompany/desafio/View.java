@@ -10,7 +10,9 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.BiConsumer;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -30,69 +32,56 @@ public class View<T> extends Observable<T> {
     private JTextField textField;
     private Map<String, T> properties = new HashMap<>();
     private JTextField outputField;
+    private JLabel inputLabel;
+    private JComboBox<BindingType> bindingTypeComboBox;
+    private JButton applyButton;
+    private T propertyValue;
 
     public View() {
-
         frame = new JFrame("Exemplo de Data Binding");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(300, 100);
+        frame.setSize(400, 300);
 
-        label = new JLabel("Nome do usuário:");
+        inputLabel = new JLabel("modelo");
         textField = new JTextField(20);
         outputField = new JTextField(20);
-
+        bindingTypeComboBox = new JComboBox<>(BindingType.values());
+        applyButton = new JButton("Aplicar Binding");
         JPanel panel = new JPanel();
-        panel.add(label);
+        panel.add(inputLabel);
         panel.add(textField);
-        panel.add(new JLabel("Valor atualizado: "));
+        panel.add(new JLabel("atualizar modelo (só sera atualizado se a config for OP2 ou OP3)"));
         panel.add(outputField);
+        panel.add(new JLabel("Tipo de Binding: "));
+        panel.add(bindingTypeComboBox);
+        panel.add(applyButton);
 
         frame.add(panel);
         frame.setVisible(true);
-        // Atualizar a saída (outputLabel) sempre que o texto for alterado no textField
-        textField.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String newValue = textField.getText();
-                setProperty("textField", (T) newValue);
-                setProperty("outputLabel", (T) newValue);  // Atualiza o outputLabel
-            }
-        });
-          outputField.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String newValue = outputField.getText();
-                setProperty("textField", (T) newValue);
-                setProperty("outputLabel", (T) newValue);  // Atualiza o outputLabel
-            }
-        });
-      
-    }
-
-    public void update(Object data) {
-        textField.setText((String) data);
-    }
-
-    public T getProperty(String propertyName) {
-        return properties.get(propertyName);
+     
     }
 
     public void setProperty(String propertyName, T value) {
         properties.put(propertyName, value);
         if (propertyName.equals("textField")) {
             textField.setText((String) value);
-        } else if (propertyName.equals("outputLabel")) {
-            outputField.setText((String) value);
         }
-        notifyObservers(propertyName, value);
+        if (propertyName.equals("label")) {
+            label.setText((String) value);
+        }
     }
 
-    public void render() {
-        frame.setVisible(true);
+    public T getProperty(String propertyName) {
+        return properties.get(propertyName);
     }
 
-    public void update(String propertyName, T newValue) {
-        setProperty(propertyName, newValue);
+    public void addPropertyChangeListener(String propertyName, Observer<T> observer) {
+        addObserver(observer);
+    }
+
+    public BindingType getSelectedBindingType() {
+        // Mock implementation for demonstration purposes
+        return (BindingType) bindingTypeComboBox.getSelectedItem();
     }
 
 }

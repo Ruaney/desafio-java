@@ -3,6 +3,9 @@
  */
 package com.mycompany.desafio;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 /**
  *
  * @author ruaney
@@ -10,21 +13,22 @@ package com.mycompany.desafio;
 public class Desafio {
 
     public static void main(String[] args) {
-        // Criar instâncias das classes
+         // Criação do Modelo
         Model<String> model = new Model<>();
-        View<String> view = new View<>();
-        DataBinding binding = new DataBinding();
-        DataBinding dataBinder = new DataBinding();
-        Presenter presenter = new Presenter(model, view, dataBinder);
-        
-        // Atualizar o modelo e ver a atualização na view
-        model.setData("Novo valor no modelo");
-        System.out.println("View após atualização do modelo: " + view.getProperty("textField"));
 
-        // Atualizar a view e ver a atualização no modelo
-        view.setProperty("textField", "Novo valor na view");
-        System.out.println("Modelo após atualização da view: " + model.getData());
-  
-   
+        // Criação da View
+        View<String> view = new View<>();
+
+        // Criação do DataBinder
+        DataBinding<String> dataBinder = new DataBinding<>(model, view);
+
+        // Criação do Presenter
+        Presenter<String> presenter = new Presenter<>(model, view, dataBinder);
+
+        // Configura o modelo e a visão inicial
+        model.setData("Valor inicial no modelo");
+        view.setProperty("textField", model.getData());
+
     }
+
 }
